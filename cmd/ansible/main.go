@@ -44,7 +44,7 @@ tasks:
 		}
 
 		for k, v := range task.Entries {
-			buildProvider, ok := registry.R.Modules[k]
+			buildProvider, ok := registry.R.Providers[k]
 			if !ok {
 				panic("no provider found")
 			}

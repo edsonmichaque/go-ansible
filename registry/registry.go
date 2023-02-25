@@ -6,15 +6,15 @@ import (
 
 )
 
-type ModuleFunc func() *ansible.Provider
+type ProviderFunc func() *ansible.Provider
 
 type Registry struct {
-	Modules map[string]ModuleFunc
+	Providers map[string]ProviderFunc
 }
 
 var R = &Registry{
-	Modules: map[string]ModuleFunc{
-		"ansible.builtin.apt": apt.BuildAPT,
+	Providers: map[string]ProviderFunc{
+		"ansible.builtin.apt": apt.Build,
 	},
 }
 
