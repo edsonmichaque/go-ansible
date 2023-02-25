@@ -2,13 +2,14 @@ package apt
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/edsonmichaque/go-ansible"
 	"gopkg.in/yaml.v3"
-	"strings"
 )
 
-func BuildAPT() *ansible.Provider {
-	apt := &providerApt{}
+func Build() *ansible.Provider {
+	apt := &apt{}
 
 	return &ansible.Provider{
 		Init:   apt.Init,
@@ -17,7 +18,7 @@ func BuildAPT() *ansible.Provider {
 	}
 }
 
-type providerApt struct {
+type apt struct {
 	Name              string   `yaml:"name"`
 	State             string   `yaml:"state"`
 	UpdateCache       bool     `yaml:"update_cache"`
@@ -29,11 +30,11 @@ type providerApt struct {
 	InstallRecommends bool     `yaml:"install_recommends"`
 }
 
-func (a *providerApt) Init() {
+func (a *apt) Init() {
 	fmt.Println("apt init")
 }
 
-func (a *providerApt) Finish() {
+func (a *apt) Finish() {
 	fmt.Println("apt finish")
 }
 
@@ -41,7 +42,7 @@ type Decoder interface {
 	Decode(v interface{}) error
 }
 
-func (a *providerApt) Run(m *ansible.Provider, dec yaml.Node) (string, error) {
+func (a *apt) Run(m *ansible.Provider, dec yaml.Node) (string, error) {
 	if err := dec.Decode(a); err != nil {
 		return "", err
 	}
