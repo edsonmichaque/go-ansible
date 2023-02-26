@@ -25,14 +25,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/edsonmichaque/go-ansible"
+	"github.com/edsonmichaque/go-ansible/internal/provider"
 	"gopkg.in/yaml.v3"
 )
 
-func Build() *ansible.Provider {
+func Build() *provider.Provider {
 	apt := &apt{}
 
-	return &ansible.Provider{
+	return &provider.Provider{
 		Init:   apt.Init,
 		Run:    apt.Run,
 		Finish: apt.Finish,
@@ -63,7 +63,7 @@ type Decoder interface {
 	Decode(v interface{}) error
 }
 
-func (a *apt) Run(m *ansible.Provider, dec yaml.Node) (string, error) {
+func (a *apt) Run(m *provider.Provider, dec yaml.Node) (string, error) {
 	if err := dec.Decode(a); err != nil {
 		return "", err
 	}

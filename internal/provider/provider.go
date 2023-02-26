@@ -19,7 +19,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-package ansible
+package provider
 
 import (
 	"fmt"
@@ -40,4 +40,8 @@ type Provider struct {
 
 func (m Provider) Print(data ...interface{}) {
 	fmt.Println(data...)
+}
+
+func (m Provider) Printf(format string, data ...interface{}) {
+	fmt.Printf(fomat, data...)
 }

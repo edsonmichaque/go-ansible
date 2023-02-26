@@ -24,7 +24,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/edsonmichaque/go-ansible/registry"
+	"github.com/edsonmichaque/go-ansible/internal/registry"
 	"gopkg.in/yaml.v3"
 )
 
@@ -65,8 +65,8 @@ tasks:
 		}
 
 		for k, v := range task.Entries {
-			buildProvider, ok := registry.R.Providers[k]
-			if !ok {
+			buildProvider, err := registry.Find(k)
+			if err != nil {
 				panic("no provider found")
 			}
 
@@ -98,10 +98,12 @@ tasks:
 type Playbook []Play
 
 type Play struct {
-	Name       string `yaml:"name"`
-	Hosts      string `yaml:"hosts"`
-	RemoteUser string `yaml:"remote_user"`
-	Tasks      []Task `yaml:"tasks"`
+	Name        string `yaml:"name"`
+	Hosts       string `yaml:"hosts"`
+	RemoteUser  string `yaml:"remote_user"`
+	GatherFacts bool   `yaml:"gather_facts"`
+	Connection  bool   `yaml:"connection"`
+	Tasks       []Task `yaml:"tasks"`
 }
 
 type Task struct {

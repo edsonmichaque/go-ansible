@@ -22,20 +22,37 @@
 package registry
 
 import (
-	"github.com/edsonmichaque/go-ansible"
-	"github.com/edsonmichaque/go-ansible/providers/ansible/builtin/apt"
+	"errors"
 
+	"github.com/edsonmichaque/go-ansible/internal/provider"
+	"github.com/edsonmichaque/go-ansible/internal/provider/ansible/builtin/apt"
 )
 
-type ProviderFunc func() *ansible.Provider
+var r *Registry
+
+func init() {
+	r = &Registry{
+		Providers: map[string]ProviderFunc{
+			"ansible.builtin.apt": apt.Build,
+		},
+	}
+}
+
+func Find(name string) (ProviderFunc, error) {
+	return r.Find(name)
+}
+
+type ProviderFunc func() *provider.Provider
 
 type Registry struct {
 	Providers map[string]ProviderFunc
 }
 
-var R = &Registry{
-	Providers: map[string]ProviderFunc{
-		"ansible.builtin.apt": apt.Build,
-	},
-}
+func (r Registry) Find(name string) (ProviderFunc, error) {
+	f, ok := r.Providers[name]
+	if !ok {
+		return nil, errors.New("not found")
+	}
 
+	return f, nil
+}
