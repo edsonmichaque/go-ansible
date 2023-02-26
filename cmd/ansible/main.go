@@ -24,7 +24,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/edsonmichaque/go-ansible/internal/ansible"
+	"github.com/edsonmichaque/go-ansible/internal/playbook"
 	"github.com/edsonmichaque/go-ansible/internal/registry"
 	"gopkg.in/yaml.v3"
 )
@@ -53,7 +53,7 @@ tasks:
     name: edson
 `
 
-	var s ansible.Play
+	var s playbook.Play
 	if err := yaml.Unmarshal([]byte(data), &s); err != nil {
 		panic(err)
 	}

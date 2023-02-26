@@ -1,4 +1,4 @@
-package ansible
+package playbook
 
 type Playbook []Play
 

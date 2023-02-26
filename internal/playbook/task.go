@@ -1,4 +1,4 @@
-package ansible
+package playbook
 
 import (
 	"gopkg.in/yaml.v3"
