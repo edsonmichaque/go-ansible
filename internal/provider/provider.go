@@ -43,5 +43,5 @@ func (m Provider) Print(data ...interface{}) {
 }
 
 func (m Provider) Printf(format string, data ...interface{}) {
-	fmt.Printf(fomat, data...)
+	fmt.Printf(format, data...)
 }

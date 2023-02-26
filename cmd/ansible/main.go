@@ -24,6 +24,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/edsonmichaque/go-ansible/internal/ansible"
 	"github.com/edsonmichaque/go-ansible/internal/registry"
 	"gopkg.in/yaml.v3"
 )
@@ -52,7 +53,7 @@ tasks:
     name: edson
 `
 
-	var s Play
+	var s ansible.Play
 	if err := yaml.Unmarshal([]byte(data), &s); err != nil {
 		panic(err)
 	}
@@ -93,37 +94,4 @@ tasks:
 		}
 	}
 
-}
-
-type Playbook []Play
-
-type Play struct {
-	Name        string `yaml:"name"`
-	Hosts       string `yaml:"hosts"`
-	RemoteUser  string `yaml:"remote_user"`
-	GatherFacts bool   `yaml:"gather_facts"`
-	Connection  bool   `yaml:"connection"`
-	Tasks       []Task `yaml:"tasks"`
-}
-
-type Task struct {
-	Name               string               `yaml:"name"`
-	Entries            map[string]yaml.Node `yaml:",inline"`
-	Loop               interface{}          `yaml:"loop"`
-	Vars               interface{}          `yaml:"vars"`
-	When               interface{}          `yaml:"when"`
-	Register           interface{}          `yaml:"register"`
-	Until              interface{}          `yaml:"until"`
-	Retries            interface{}          `yaml:"retries"`
-	DelegateTo         interface{}          `yaml:"delegate_to"`
-	DelegateFacts      interface{}          `yaml:"delegate_facts"`
-	LocalAction        interface{}          `yaml:"local_action"`
-	Action             interface{}          `yaml:"action"`
-	LoopControl        interface{}          `yaml:"loop_control"`
-	RunOnce            interface{}          `yaml:"run_once"`
-	Lineinfile         interface{}          `yaml:"lineinfile"`
-	ImportTasks        interface{}          `yaml:"import_tasks"`
-	IncludeTasks       interface{}          `yaml:"include_tasks"`
-	IgnoreUnreacheable interface{}          `yaml:"ignore_unreacheable"`
-	FailedWhen         interface{}          `yaml:"failed_when"`
 }
