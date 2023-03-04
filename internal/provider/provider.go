@@ -22,20 +22,56 @@
 package provider
 
 import (
+	"context"
 	"fmt"
+
 	"gopkg.in/yaml.v3"
 )
 
-type RunFunc func(*Provider, yaml.Node) (string, error)
+type RunnerFunc func(context.Context, *Provider, yaml.Node) (string, error)
+
+func (r RunnerFunc) Run(ctx context.Context, provider *Provider, node yaml.Node) (string, error) {
+	return r(ctx, provider, node)
+}
+
+type Runner interface {
+	Run(context.Context, *Provider, yaml.Node) (string, error)
+}
+
+type PreRunnerFunc func(context.Context, *Provider, yaml.Node) (string, error)
+
+func (r PreRunnerFunc) Run(ctx context.Context, provider *Provider, node yaml.Node) (string, error) {
+	return r(ctx, provider, node)
+}
+
+type PreRunner interface {
+	Run(context.Context, *Provider, yaml.Node) (string, error)
+}
+
+type PostRunnerFunc func(context.Context, *Provider, yaml.Node) (string, error)
+
+func (r PostRunnerFunc) Run(ctx context.Context, provider *Provider, node yaml.Node) (string, error) {
+	return r(ctx, provider, node)
+}
+
+type PostRunner interface {
+	Run(context.Context, *Provider, yaml.Node) (string, error)
+}
+
+type InitializerFunc func(ctx context.Context)
+
+func (i InitializerFunc) Init(ctx context.Context) {}
+
+type Initializer interface {
+	Init(context.Context)
+}
 
 type Provider struct {
-	PreInit  func()
-	Init     func()
-	PostInit func()
-	PreRun   func()
-	Run      RunFunc
-	PostRun  func()
-	Finish   func()
+	ID      string
+	Init    Initializer
+	PreRun  PreRunner
+	Run     Runner
+	PostRun PostRunner
 }
 
 func (m Provider) Print(data ...interface{}) {

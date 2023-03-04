@@ -22,6 +22,7 @@
 package apt
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -30,32 +31,32 @@ import (
 )
 
 func Build() *provider.Provider {
-	apt := &apt{}
+	apt := &aptProvider{}
 
 	return &provider.Provider{
-		Init:   apt.Init,
-		Run:    apt.Run,
-		Finish: apt.Finish,
+		ID:   "apt",
+		Init: provider.InitializerFunc(apt.init),
+		Run:  provider.RunnerFunc(apt.run),
 	}
 }
 
-type apt struct {
+type aptProvider struct {
 	Name              string   `yaml:"name"`
 	State             string   `yaml:"state"`
 	UpdateCache       bool     `yaml:"update_cache"`
 	Upgrade           bool     `yaml:"upgrade"`
-	PKG               []string `yaml:"pkg"`
+	Pkg               []string `yaml:"pkg"`
 	DefaultRelease    string   `yaml:"default_release"`
 	AllowDowngrade    bool     `yaml:"allow_downgrade"`
 	FailOnAutoremove  bool     `yaml:"fail_on_autoremove"`
 	InstallRecommends bool     `yaml:"install_recommends"`
 }
 
-func (a *apt) Init() {
+func (a *aptProvider) init(ctx context.Context) {
 	fmt.Println("apt init")
 }
 
-func (a *apt) Finish() {
+func (a *aptProvider) Finish() {
 	fmt.Println("apt finish")
 }
 
@@ -63,7 +64,7 @@ type Decoder interface {
 	Decode(v interface{}) error
 }
 
-func (a *apt) Run(m *provider.Provider, dec yaml.Node) (string, error) {
+func (a *aptProvider) run(ctx context.Context, m *provider.Provider, dec yaml.Node) (string, error) {
 	if err := dec.Decode(a); err != nil {
 		return "", err
 	}
@@ -88,8 +89,8 @@ func (a *apt) Run(m *provider.Provider, dec yaml.Node) (string, error) {
 		pkg = append(pkg, a.Name)
 	}
 
-	if len(a.PKG) != 0 {
-		pkg = append(pkg, a.PKG...)
+	if len(a.Pkg) != 0 {
+		pkg = append(pkg, a.Pkg...)
 	}
 
 	return fmt.Sprintf("apt %s %s", command, strings.Join(pkg, " ")), nil
