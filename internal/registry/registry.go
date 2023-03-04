@@ -26,6 +26,7 @@ import (
 
 	"github.com/edsonmichaque/go-ansible/internal/provider"
 	"github.com/edsonmichaque/go-ansible/internal/provider/ansible/builtin/apt"
+	"github.com/edsonmichaque/go-ansible/internal/provider/ansible/builtin/dnf"
 )
 
 var r *Registry
@@ -34,6 +35,7 @@ func init() {
 	r = &Registry{
 		Providers: map[string]ProviderFunc{
 			"ansible.builtin.apt": apt.Build,
+			"ansible.builtin.dnf": dnf.Build,
 		},
 	}
 }

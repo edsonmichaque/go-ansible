@@ -40,22 +40,22 @@ type Runner interface {
 
 type PreRunnerFunc func(context.Context, *Provider, yaml.Node) (string, error)
 
-func (r PreRunnerFunc) Run(ctx context.Context, provider *Provider, node yaml.Node) (string, error) {
+func (r PreRunnerFunc) PreRun(ctx context.Context, provider *Provider, node yaml.Node) (string, error) {
 	return r(ctx, provider, node)
 }
 
 type PreRunner interface {
-	Run(context.Context, *Provider, yaml.Node) (string, error)
+	PreRun(context.Context, *Provider, yaml.Node) error
 }
 
 type PostRunnerFunc func(context.Context, *Provider, yaml.Node) (string, error)
 
-func (r PostRunnerFunc) Run(ctx context.Context, provider *Provider, node yaml.Node) (string, error) {
+func (r PostRunnerFunc) PostRun(ctx context.Context, provider *Provider, node yaml.Node) (string, error) {
 	return r(ctx, provider, node)
 }
 
 type PostRunner interface {
-	Run(context.Context, *Provider, yaml.Node) (string, error)
+	PostRun(context.Context, *Provider, yaml.Node) error
 }
 
 type InitializerFunc func(ctx context.Context)
@@ -71,9 +71,42 @@ type Initializer interface {
 type Provider struct {
 	ID          string
 	Initializer Initializer
-	PreRun      PreRunner
+	PreRunner   PreRunner
 	Runner      Runner
 	PostRunner  PostRunner
+}
+
+func (r Provider) PreRun(ctx context.Context, provider *Provider, node yaml.Node) error {
+	return r.PreRunner.PreRun(ctx, provider, node)
+}
+
+func (r Provider) Run(ctx context.Context, provider *Provider, node yaml.Node) (string, error) {
+	if r.PreRunner != nil {
+		if err := r.PreRun(ctx, provider, node); err != nil {
+			return "", err
+		}
+	}
+
+	script, err := r.Runner.Run(ctx, provider, node)
+	if err != nil {
+		return "", err
+	}
+
+	if r.PostRunner != nil {
+		if err := r.PostRun(ctx, provider, node); err != nil {
+			return script, err
+		}
+	}
+
+	return script, nil
+}
+
+func (r Provider) PostRun(ctx context.Context, provider *Provider, node yaml.Node) error {
+	return r.PostRunner.PostRun(ctx, provider, node)
+}
+
+func (p Provider) Init(ctx context.Context) {
+	p.Initializer.Init(ctx)
 }
 
 func (m Provider) Print(data ...interface{}) {

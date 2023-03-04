@@ -33,6 +33,12 @@ import (
 func main() {
 	data := `
 tasks:
+- name: a
+  ansible.builtin.dnf:
+    state: present
+    pkg:
+    - apache2
+    - nginx
 - name: b
   ansible.builtin.apt:
     state: present
@@ -59,17 +65,17 @@ tasks:
 				panic("no provider found")
 			}
 
-			provider := buildProvider()
+			foundProvider := buildProvider()
 
-			if provider.Initializer != nil {
-				provider.Initializer.Init(context.Background())
+			if foundProvider.Initializer != nil {
+				foundProvider.Init(context.Background())
 			}
 
-			if provider.Runner == nil {
+			if foundProvider.Runner == nil {
 				panic("no runner")
 			}
 
-			cmd, err := provider.Runner.Run(context.Background(), provider, v)
+			cmd, err := foundProvider.Run(context.Background(), foundProvider, v)
 			if err != nil {
 				panic(err)
 			}
