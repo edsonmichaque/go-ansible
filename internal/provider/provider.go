@@ -69,11 +69,11 @@ type Initializer interface {
 }
 
 type Provider struct {
-	ID      string
-	Init    Initializer
-	PreRun  PreRunner
-	Run     Runner
-	PostRun PostRunner
+	ID          string
+	Initializer Initializer
+	PreRun      PreRunner
+	Runner      Runner
+	PostRunner  PostRunner
 }
 
 func (m Provider) Print(data ...interface{}) {

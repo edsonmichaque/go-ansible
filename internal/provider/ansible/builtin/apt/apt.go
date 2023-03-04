@@ -34,9 +34,9 @@ func Build() *provider.Provider {
 	apt := &aptProvider{}
 
 	return &provider.Provider{
-		ID:   "apt",
-		Init: provider.InitializerFunc(apt.init),
-		Run:  provider.RunnerFunc(apt.run),
+		ID:          "apt",
+		Initializer: provider.InitializerFunc(apt.init),
+		Runner:      provider.RunnerFunc(apt.run),
 	}
 }
 

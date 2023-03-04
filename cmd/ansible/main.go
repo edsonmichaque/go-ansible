@@ -22,6 +22,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/edsonmichaque/go-ansible/internal/playbook"
@@ -32,25 +33,12 @@ import (
 func main() {
 	data := `
 tasks:
-- name: a
-  ansible.builtin.dnf:
-    name: httpd
-    state: present
 - name: b
   ansible.builtin.apt:
     state: present
     pkg:
     - apache2
     - nginx
-- name: b
-  ansible.builtin.apk:
-    state: present
-    pkg:
-    - apache2
-    - nginx
-- name: e
-  ansible.builtin.user:
-    name: edson
 `
 
 	var s playbook.Play
@@ -73,24 +61,20 @@ tasks:
 
 			provider := buildProvider()
 
-			if provider.Init != nil {
-				provider.Init()
+			if provider.Initializer != nil {
+				provider.Initializer.Init(context.Background())
 			}
 
-			if provider.Run == nil {
+			if provider.Runner == nil {
 				panic("no runner")
 			}
 
-			cmd, err := provider.Run(provider, v)
+			cmd, err := provider.Runner.Run(context.Background(), provider, v)
 			if err != nil {
 				panic(err)
 			}
 
 			fmt.Println(cmd)
-
-			if provider.Finish != nil {
-				provider.Finish()
-			}
 		}
 	}
 
