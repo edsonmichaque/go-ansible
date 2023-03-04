@@ -36,9 +36,7 @@ tasks:
 - name: a
   ansible.builtin.dnf:
     state: present
-    pkg:
-    - apache2
-    - nginx
+    name: httpd
 - name: b
   ansible.builtin.apt:
     state: present
@@ -69,10 +67,6 @@ tasks:
 
 			if foundProvider.Initializer != nil {
 				foundProvider.Init(context.Background())
-			}
-
-			if foundProvider.Runner == nil {
-				panic("no runner")
 			}
 
 			cmd, err := foundProvider.Run(context.Background(), foundProvider, v)

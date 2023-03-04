@@ -23,6 +23,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"gopkg.in/yaml.v3"
@@ -81,6 +82,10 @@ func (r Provider) PreRun(ctx context.Context, provider *Provider, node yaml.Node
 }
 
 func (r Provider) Run(ctx context.Context, provider *Provider, node yaml.Node) (string, error) {
+	if r.Runner == nil {
+		return "", errors.New("no provider find")
+	}
+
 	if r.PreRunner != nil {
 		if err := r.PreRun(ctx, provider, node); err != nil {
 			return "", err
