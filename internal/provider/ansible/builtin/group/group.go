@@ -19,7 +19,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-package apt
+package group
 
 import (
 	"context"
@@ -31,19 +31,19 @@ import (
 )
 
 func Build() *provider.Provider {
-	apt := &aptProvider{}
+	group := &groupProvider{}
 
 	return &provider.Provider{
-		ID:          "apt",
+		ID:          "group",
 		Name:        "APT",
 		Version:     "0.1.0",
 		Author:      "Edson Michaque <edson@michaque.com>",
-		Initializer: provider.InitializerFunc(apt.init),
-		Runner:      provider.RunnerFunc(apt.run),
+		Initializer: provider.InitializerFunc(group.init),
+		Runner:      provider.RunnerFunc(group.run),
 	}
 }
 
-type aptProvider struct {
+type groupProvider struct {
 	Name              string   `yaml:"name"`
 	State             string   `yaml:"state"`
 	UpdateCache       bool     `yaml:"update_cache"`
@@ -55,19 +55,19 @@ type aptProvider struct {
 	InstallRecommends bool     `yaml:"install_recommends"`
 }
 
-func (a *aptProvider) init(ctx context.Context) {
-	fmt.Println("apt init")
+func (a *groupProvider) init(ctx context.Context) {
+	fmt.Println("group init")
 }
 
-func (a *aptProvider) Finish() {
-	fmt.Println("apt finish")
+func (a *groupProvider) Finish() {
+	fmt.Println("group finish")
 }
 
 type Decoder interface {
 	Decode(v interface{}) error
 }
 
-func (a *aptProvider) run(ctx context.Context, m *provider.Provider, dec yaml.Node) (string, error) {
+func (a *groupProvider) run(ctx context.Context, m *provider.Provider, dec yaml.Node) (string, error) {
 	if err := dec.Decode(a); err != nil {
 		return "", err
 	}
@@ -96,5 +96,5 @@ func (a *aptProvider) run(ctx context.Context, m *provider.Provider, dec yaml.No
 		pkg = append(pkg, a.Pkg...)
 	}
 
-	return fmt.Sprintf("apt %s %s", command, strings.Join(pkg, " ")), nil
+	return fmt.Sprintf("group %s %s", command, strings.Join(pkg, " ")), nil
 }

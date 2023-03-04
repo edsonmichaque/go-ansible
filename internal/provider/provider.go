@@ -71,6 +71,11 @@ type Initializer interface {
 
 type Provider struct {
 	ID          string
+	Name        string
+	Version     string
+	Description string
+	Author      string
+
 	Initializer Initializer
 	PreRunner   PreRunner
 	Runner      Runner
