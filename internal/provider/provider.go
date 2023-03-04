@@ -60,7 +60,9 @@ type PostRunner interface {
 
 type InitializerFunc func(ctx context.Context)
 
-func (i InitializerFunc) Init(ctx context.Context) {}
+func (i InitializerFunc) Init(ctx context.Context) {
+	i(ctx)
+}
 
 type Initializer interface {
 	Init(context.Context)
