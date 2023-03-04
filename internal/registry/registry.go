@@ -23,6 +23,7 @@ package registry
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/edsonmichaque/go-ansible/internal/provider"
 	"github.com/edsonmichaque/go-ansible/internal/provider/ansible/builtin/apt"
@@ -30,14 +31,17 @@ import (
 )
 
 var r *Registry
+var once sync.Once
 
 func init() {
-	r = &Registry{
-		Providers: map[string]ProviderFunc{
-			"ansible.builtin.apt": apt.Build,
-			"ansible.builtin.dnf": dnf.Build,
-		},
-	}
+	once.Do(func() {
+		r = &Registry{
+			Providers: map[string]ProviderFunc{
+				"ansible.builtin.apt": apt.Build,
+				"ansible.builtin.dnf": dnf.Build,
+			},
+		}
+	})
 }
 
 func Find(name string) (ProviderFunc, error) {
